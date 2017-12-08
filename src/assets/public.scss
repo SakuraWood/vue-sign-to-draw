@@ -1,0 +1,13 @@
+//清除浮动
+.clear-float{
+  overflow: hidden;
+  *zoom : 1;
+
+  &::after{
+    display: block;
+    content: " ";
+    clear: both;
+    height: 0;
+    visibility: hidden;
+  }
+}
