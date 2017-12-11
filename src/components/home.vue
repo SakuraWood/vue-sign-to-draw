@@ -3,13 +3,18 @@
     <div class="header-banner">
       <img src="../assets/images/qdBanner.jpg" alt="签到宣传图">
     </div>
-    <canlendar></canlendar>
+    <canlendar :sign='sign'></canlendar>
   </div>
 </template>
 
 <script>
 import canlendar from './canlendar.vue'
 export default {
+  data () {
+    return {
+      sign: [12, 13, 15, 17]
+    }
+  },
   components: {
     canlendar
   }
