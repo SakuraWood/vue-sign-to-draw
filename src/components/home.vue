@@ -12,7 +12,7 @@ import canlendar from './canlendar.vue'
 export default {
   data () {
     return {
-      sign: [12, 13, 15, 17]
+      signed: []
     }
   },
   components: {

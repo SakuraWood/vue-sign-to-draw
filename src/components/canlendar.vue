@@ -1,9 +1,9 @@
 <template lang="html">
   <div class="canlendar-container">
     <div class="cal-header">
-      <span class="prev-month">上个月</span>
-      <span class="next-month">下个月</span>
-      <span class="year-month">2017-02</span>
+      <span class="prev-month" @click="changeMonth(-1)">上个月</span>
+      <span class="next-month" @click="changeMonth(1)">下个月</span>
+      <span class="year-month">{{date.year}}-{{date.month + 1}}</span>
     </div>
     <div class="cal-body">
       <table class="cal-table">
@@ -13,8 +13,8 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="tr in tbody">
-              <td v-for="td in tr" :class="{signed : sign.indexOf(parseInt(td)) > -1}">{{td}}</td>
+          <tr v-for="tr in date.days">
+              <td v-for="td in tr" :class="{signed : signed.indexOf(parseInt(td)) > -1}">{{td}}</td>
           </tr>
         </tbody>
       </table>
@@ -27,40 +27,39 @@ export default {
   data () {
     return {
       thead: ['一', '二', '三', '四', '五', '六', '日'],
-      tbody: [
-        [1, 2, 3, 4, 5, 6, 7],
-        [8, 9, 10, 11, 12, 13, 14],
-        [15, 16, 17, 18, 19, 20, 21],
-        [22, 23, 24, 25, 26, 27, 28],
-        [29, 30, 31]
-      ]
+      date: {
+        year: 2017,
+        month: 12,
+        day: 11,
+        days: []
+      }
     }
   },
   props: {
-    sign: {
+    signed: {
       required: false,
       type: Array,
       default: []
     }
   },
   created () {
-    this._initData()
+    this._initData(new Date())
   },
   methods: {
-    _initData () {
-      let curDate = new Date()
-      let curDay = curDate.getDate()
-      let curMonth = curDate.getMonth()
-      let curYear = curDate.getFullYear()
-      console.log('today' + curDay + ' ' + curMonth + ' ' + curYear)
-      let firDate = new Date(curYear, curMonth, 1)
-      let lastDate = new Date(curYear, curMonth + 1, 0)
-      console.log('first day' + firDate)
-      console.log('last day' + lastDate)
-      let firDay = this._dealWeek(firDate.getDay())  // 本月第一天是周几？
+    _initData (date) {
+      this.date.day = date.getDate()
+      this.date.month = date.getMonth()
+      this.date.year = date.getFullYear()
+
+      let firDate = new Date(this.date.year, this.date.month, 1)
+      let lastDate = new Date(this.date.year, this.date.month + 1, 0)
+      console.log('该月的第一天 ' + firDate)
+      console.log('该月的最后一天 ' + lastDate)
+      let firWeek = this._dealWeek(firDate.getDay())  // 本月第一天是周几？
       let lastDay = lastDate.getDate()
-      console.log(firDay)
-      console.log(lastDay)
+      console.log('第一天是周几？ ' + firWeek)
+      console.log('该月共有多少天？ ' + lastDay)
+      this.date.days = this._proData(firWeek, lastDay)
     },
     _dealWeek (day) {
       return day === 0 ? 7 : day
@@ -74,8 +73,19 @@ export default {
         }
         temp.push(i - fir + 1)
       }
-
-      // splice分割数组
+      return this._spliceArray(temp, 0, 7)
+    },
+    _spliceArray (target, start, count) {
+      let temp = []
+      if (target.length) {
+        do {
+          temp.push(target.splice(start, count))
+        } while (target.length)
+      }
+      return temp
+    },
+    changeMonth (num) {
+      this._initData(new Date(this.date.year, this.date.month + num, 1))
     }
   }
 }
