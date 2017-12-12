@@ -51,14 +51,11 @@ export default {
       this.date.month = date.getMonth()
       this.date.year = date.getFullYear()
 
-      let firDate = new Date(this.date.year, this.date.month, 1)
-      let lastDate = new Date(this.date.year, this.date.month + 1, 0)
-      console.log('该月的第一天 ' + firDate)
-      console.log('该月的最后一天 ' + lastDate)
-      let firWeek = this._dealWeek(firDate.getDay())  // 本月第一天是周几？
-      let lastDay = lastDate.getDate()
-      console.log('第一天是周几？ ' + firWeek)
-      console.log('该月共有多少天？ ' + lastDay)
+      let firDate = new Date(this.date.year, this.date.month, 1) // 本月的第一天
+      let lastDate = new Date(this.date.year, this.date.month + 1, 0) // 本月的最后一天
+      let firWeek = this._dealWeek(firDate.getDay())  // 本月第一天是周几
+      let lastDay = lastDate.getDate()   // 本月的共有多少天
+
       this.date.days = this._proData(firWeek, lastDay)
     },
     _dealWeek (day) {
