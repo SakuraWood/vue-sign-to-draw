@@ -1,6 +1,6 @@
 <template lang="html">
-  <div class="">
-    抽奖demo页
+  <div class="draw-container">
+    
   </div>
 </template>
 
