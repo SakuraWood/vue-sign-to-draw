@@ -39,7 +39,9 @@ export default {
     signed: {
       required: false,
       type: Array,
-      default: []
+      default: function () {
+        return []
+      }
     }
   },
   created () {

@@ -17,6 +17,8 @@
       "dontLoad": "",
       "load": "",
       "modules": ""
-    }
+    },
+    "commonjs": {},
+    "node_resolve": {}
   }
 }
