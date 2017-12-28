@@ -7,6 +7,7 @@
       <div class="slyder">
         <div class="slyder-bg">
           <canvas id="canvas" :width="slyder.canvasL" :height="slyder.canvasL"></canvas>
+          <img src="../assets/images/slyder-pointer.png" alt="转盘指针" class="slyder-ponit" @click="rotateSlyder">
         </div>
       </div>
     </div>
@@ -36,8 +37,10 @@ export default {
   },
   methods: {
     _drawSlyder () {
-      let Qimg = document.getElementsByClassName('img-Q')
-      let Simg = document.getElementsByClassName('img-sorry')
+      // 图片对象
+      let Qimg = document.getElementsByClassName('img-Q')[0]
+      let Simg = document.getElementsByClassName('img-sorry')[0]
+      // 参数
       let itemCount = this.slyder.slyderText.length
       let itemAngle = 2 * Math.PI / itemCount
 
@@ -91,14 +94,9 @@ export default {
             ctx.fillText(itemText, -ctx.measureText(itemText).width / 2, 0)
 
             if (itemText.indexOf('币') !== -1) {
-              Qimg.onload = function () {
-                console.log(1)
-                ctx.drawImage(Qimg, 0, 0)
-              }
+              ctx.drawImage(Qimg, -16, 20)
             } else {
-              Simg.onload = () => {
-                ctx.drawImage(Simg, 0, 0)
-              }
+              ctx.drawImage(Simg, -16, 20)
             }
           }
 
@@ -107,6 +105,9 @@ export default {
       } else {
         alert('浏览器不支持canvas')
       }
+    },
+    rotateSlyder () {
+      console.log('start rotate!')
     }
   }
 }
@@ -130,12 +131,20 @@ export default {
         margin: -5rem auto 0;
 
         .slyder-bg{
+          position: relative;
           width: 100%;
           background-image: url('../assets/images/slyder-bg.png');
           background-size: 100% 100%;
 
           canvas{
             width: 100%;
+          }
+
+          .slyder-ponit{
+            width: 116px;
+            position: absolute;
+            top: 24%;
+            left: 35%;
           }
         }
       }
