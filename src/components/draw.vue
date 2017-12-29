@@ -1,12 +1,12 @@
 <template lang="html">
   <div class="draw-container">
     <div class="draw-area">
-      <img class="draw-title-img" src="../assets/images/turbanner.png" alt="">
+      <img class="draw-title-img" src="../assets/images/turbanner.png" alt="" >
       <img class="hidden-img img-Q" src="../assets/images/1.png" alt="">
       <img class="hidden-img img-sorry" src="../assets/images/2.png" alt="">
       <div class="slyder">
-        <div class="slyder-bg">
-          <canvas id="canvas" :width="slyder.canvasL" :height="slyder.canvasL"></canvas>
+        <div class="slyder-bg" ref="slyder-bg">
+          <canvas id="canvas" :width="slyder.canvasL" :height="slyder.canvasL" :style="canvasStyle"></canvas>
           <img src="../assets/images/slyder-pointer.png" alt="转盘指针" class="slyder-ponit" @click="rotateSlyder">
         </div>
       </div>
@@ -15,6 +15,7 @@
 </template>
 
 <script>
+import * as util from '../assets/utils'
 export default {
   data () {
     return {
@@ -27,12 +28,36 @@ export default {
         insideRadius: 68,
         textRadius: 155,
         lineHeight: 20
-      }
+      },
+      rotating: false,
+      noneRotate: 0,
+      relRotate: 0,
+      transitionTime: 2,
+      award: 0
+    }
+  },
+  computed: {
+    canvasStyle () {
+      return `
+          transition: transform ${this.transitionTime}s linear;
+          transform: rotate(${this.angle}deg);
+      `
+    },
+    angle () {
+      return this.noneRotate * 360 + this.relRotate * 360
     }
   },
   mounted () {
     this.$nextTick(() => {
+      util.css(this.$refs['slyder-bg'], { // 设置父元素
+        height: util.css(this.$refs['slyder-bg'], 'width')
+      })
       this._drawSlyder()
+
+      // document.querySelector('#canvas').addEventListener('transitionend', function (a, b) {
+      //   console.log('transitionend :' + b)
+      //   console.log(new Date())
+      // })
     })
   },
   methods: {
@@ -89,7 +114,7 @@ export default {
             }
           }
 
-          if (itemText.indexOf('流量') === -1) {
+          if (itemText.indexOf('流量') === -1) { // 根据不同的文案配不同的图片
             ctx.font = 'bold 20px Microsoft YaHei'
             ctx.fillText(itemText, -ctx.measureText(itemText).width / 2, 0)
 
@@ -107,7 +132,44 @@ export default {
       }
     },
     rotateSlyder () {
-      console.log('start rotate!')
+      if (!this.rotating) { // 旋转中不可重复触发
+        console.log('start rotate!')
+        // console.log(new Date())
+        this.noneRotate ++
+        // this.transitionTime *= 2
+
+        this.rotating = true
+        let getAward = new Promise((resolve, reject) => {
+          console.log('new promise')
+          setTimeout(() => {
+            console.log('getAward resolved')
+            resolve(util.randomNumber(0, 9))
+          }, 2500)
+        })
+
+        let noneRo = setInterval(() => {
+          this.noneRotate++
+          console.log('noneRotate ++')
+        }, this.transitionTime * 1000)
+
+        getAward.then(num => {
+          console.log('promise then start :' + num)
+          this.award = num
+          clearInterval(noneRo)
+          this.relRotate = (num < 2 ? num + 9 : num) / 10
+
+          let relRote = setInterval(() => {
+            if (this.transitionTime < 4) {
+              this.transitionTime *= 1.5
+            } else {
+              console.log('clear relRote')
+              clearInterval(relRote)
+            }
+          }, this.transitionTime / 5 * 1000)
+        })
+      } else {
+        console.log('slyder is rotating')
+      }
     }
   }
 }
@@ -133,11 +195,18 @@ export default {
         .slyder-bg{
           position: relative;
           width: 100%;
+          height: fit-content;
           background-image: url('../assets/images/slyder-bg.png');
           background-size: 100% 100%;
 
           canvas{
+            position: absolute; //为了优化性能，转动的元素使用绝对定位
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
             width: 100%;
+            transform: rotate(0deg);
           }
 
           .slyder-ponit{
